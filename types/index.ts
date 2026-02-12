@@ -1,5 +1,7 @@
 export type Status = "OPEN" | "DONE";
 
+export type Filter = "ALL" | "OPEN" | "DONE";
+
 export interface ActionItem {
   id: string;
   task: string;
