@@ -11,6 +11,7 @@ import { Transcript, ActionItem, Filter } from "@/types";
 import TranscriptInput from "@/components/TranscriptInput";
 import ActionItemList from "@/components/ActionItemList";
 import HistorySidebar from "@/components/HistorySidebar";
+import AddActionItem from "@/components/AddActionItem";
 
 export default function Home() {
   const [transcript, setTranscript] = useState("");
@@ -20,6 +21,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("ALL");
 
+  // Fetch transcript history
   const fetchHistory = async () => {
     try {
       const json = await fetchTranscripts();
@@ -33,6 +35,7 @@ export default function Home() {
     fetchHistory();
   }, []);
 
+  // Extract transcript
   const handleSubmit = async () => {
     if (!transcript.trim()) {
       setError("Transcript cannot be empty.");
@@ -55,6 +58,7 @@ export default function Home() {
     }
   };
 
+  // Toggle status
   const toggleStatus = async (
     id: string,
     currentStatus: string
@@ -82,6 +86,7 @@ export default function Home() {
     }
   };
 
+  // Delete item
   const deleteItem = async (id: string) => {
     try {
       await deleteActionItem(id);
@@ -101,6 +106,7 @@ export default function Home() {
     }
   };
 
+  // Update after edit
   const updateItem = (updatedItem: ActionItem) => {
     setData((prev) =>
       prev
@@ -116,6 +122,7 @@ export default function Home() {
     );
   };
 
+  // Apply filter
   const filteredItems =
     data?.items.filter((item) => {
       if (filter === "ALL") return true;
@@ -124,6 +131,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen p-10 bg-gray-50 flex gap-10">
+      {/* Main Workspace */}
       <div className="flex-1">
         <h1 className="text-3xl font-bold mb-6">
           Meeting Action Items Tracker
@@ -152,6 +160,23 @@ export default function Home() {
               Action Items
             </h2>
 
+            {/* Add Item Component */}
+            <AddActionItem
+              transcriptId={data.id}
+              onCreate={(item) =>
+                setData((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        items: [...prev.items, item],
+                      }
+                    : prev
+                )
+              }
+              onError={setError}
+            />
+
+            {/* Filter Buttons */}
             <div className="flex gap-2 mb-4">
               {["ALL", "OPEN", "DONE"].map((value) => (
                 <button
@@ -180,6 +205,7 @@ export default function Home() {
         )}
       </div>
 
+      {/* Sidebar */}
       <HistorySidebar
         history={history}
         onSelect={setData}
