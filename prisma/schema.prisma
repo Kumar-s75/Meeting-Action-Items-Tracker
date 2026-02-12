@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Transcript {
+  id        String      @id @default(uuid())
+  content   String
+  createdAt DateTime    @default(now())
+  items     ActionItem[]
+}
+
+model ActionItem {
+  id           String   @id @default(uuid())
+  task         String
+  owner        String?
+  dueDate      String?
+  status       Status   @default(OPEN)
+  transcriptId String
+  transcript   Transcript @relation(fields: [transcriptId], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+enum Status {
+  OPEN
+  DONE
+}
