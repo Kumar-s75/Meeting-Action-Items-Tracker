@@ -1,70 +1,364 @@
-⚙️ Setup Instructions
+# ⚙️ Meeting Action Items Tracker
 
-Welcome! Follow the steps below to run the Meeting Action Items Tracker locally.
+A full-stack web application that extracts action items from meeting transcripts using an LLM and allows users to manage them in a mini workspace.
 
-🧠 Project Overview
+---
 
-This is a full-stack web application that:
+# 🧠 Project Overview
 
-Extracts action items from meeting transcripts using OpenAI
+This application allows users to:
 
-Stores transcripts and action items in PostgreSQL
+- Paste a meeting transcript
+- Automatically extract action items (task + owner + due date)
+- Edit, delete, and manually add items
+- Mark items as done or reopen them
+- Filter by status
+- View the last 5 processed transcripts
+- Monitor backend, database, and LLM health
 
-Supports full CRUD (Create, Read, Update, Delete)
+---
 
-Maintains history of last 5 processed transcripts
+# 🛠 Tech Stack
 
-Provides backend health monitoring (LLM + DB + server)
+- **Next.js 16 (App Router)**
+- **TypeScript**
+- **Prisma ORM**
+- **PostgreSQL (Neon)**
+- **OpenAI API (gpt-4o-mini)**
+- **TailwindCSS**
 
-Tech Stack:
+---
 
-Next.js 16 (App Router)
+# ⭐ Features Implemented
 
-TypeScript
+## ✅ Core Assignment Requirements
 
-Prisma ORM
+- ✔️ Paste meeting transcript
+- ✔️ Extract action items (task + owner + due date)
+- ✔️ Edit action items inline
+- ✔️ Add manual action items
+- ✔️ Delete action items
+- ✔️ Mark items as Done / Reopen
+- ✔️ View last 5 processed transcripts
+- ✔️ Filter by ALL / OPEN / DONE
+- ✔️ Health status page (Backend + DB + LLM)
+- ✔️ Basic validation for empty input
+- ✔️ Clean component-based UI architecture
 
-PostgreSQL (Neon)
+---
 
-OpenAI API
+## 🚀 Additional Improvements
 
-TailwindCSS
+- ✔️ Partial PATCH handling (production-safe updates)
+- ✔️ Prisma singleton pattern
+- ✔️ Centralized API wrapper (`lib/api.ts`)
+- ✔️ Type-safe domain models
+- ✔️ Proper environment management
+- ✔️ Next.js 16 dynamic route compatibility
+- ✔️ Full CRUD tested via Postman
+- ✔️ Structured project architecture
 
-1️⃣ Prerequisites
+---
 
-Make sure you have the following installed:
+# ⚙️ Setup Instructions
 
-Node.js ≥ 20.9.0 (Recommended: Node 20 LTS)
+## 1️⃣ Prerequisites
 
-npm (comes with Node)
+Make sure you have installed:
 
-PostgreSQL (local or Neon cloud)
+- **Node.js ≥ 20.9.0** (Recommended: Node 20 LTS)
+- **npm**
+- **PostgreSQL** (local or Neon cloud)
+- **Git**
 
-Git
+Check versions:
 
-📌 Version check:
-<img width="847" height="127" alt="image" src="https://github.com/user-attachments/assets/4d6bcaae-53dd-4b4f-9f53-a6c6b95c72ea" />
-2️⃣ Clone the Repository
-<img width="835" height="126" alt="image" src="https://github.com/user-attachments/assets/3cfe317b-1ee7-40f1-8bfe-a7f31b5dcb7b" />
-3️⃣ Install Dependencies
+```bash
+node -v
+npm -v
+```
 
-From the root of the project:
-<img width="857" height="101" alt="image" src="https://github.com/user-attachments/assets/f9c2fbe9-fb14-4cc8-bd89-5704bee79396" />
-This installs:
+---
 
-Next.js frontend
+## 2️⃣ Clone Repository
 
-API routes
+```bash
+git clone <your-repo-url>
+cd meeting-action-tracker
+```
 
-Prisma
+---
 
-OpenAI SDK
+## 3️⃣ Install Dependencies
 
-TailwindCSS
-4️⃣ Environment Variables
+```bash
+npm install
+```
 
-Create a .env file in the root directory:
-<img width="833" height="203" alt="image" src="https://github.com/user-attachments/assets/d76b12d9-7e5a-4128-a098-608b998a5516" />
+---
 
+## 4️⃣ Environment Variables
 
+Create a `.env` file in the root directory:
+
+```env
+DATABASE_URL="postgresql://username:password@host:5432/dbname?sslmode=require"
+OPENAI_API_KEY="sk-xxxxxxxxxxxxxxxx"
+```
+
+You can copy from:
+
+```
+.env.example
+```
+
+⚠️ Never commit `.env`.
+
+---
+
+## 5️⃣ Database Setup (Prisma)
+
+Run:
+
+```bash
+npx prisma migrate dev
+npx prisma generate
+```
+
+This will:
+
+- Create database tables
+- Generate Prisma client
+
+---
+
+## 6️⃣ Start Development Server
+
+```bash
+npm run dev
+```
+
+App runs at:
+
+```
+http://localhost:3000
+```
+
+---
+
+# 🧪 API Testing (Postman)
+
+## Extract Transcript
+
+```
+POST /api/extract
+```
+
+Body:
+
+```json
+{
+  "transcript": "John will prepare the Q3 report by Friday."
+}
+```
+
+---
+
+## Get Transcript History
+
+```
+GET /api/transcripts
+```
+
+Returns last 5 transcripts.
+
+---
+
+## Create Action Item
+
+```
+POST /api/action-item
+```
+
+Body example:
+
+```json
+{
+  "transcriptId": "TRANSCRIPT_ID",
+  "task": "Prepare slides",
+  "owner": "Mike",
+  "dueDate": "Tomorrow"
+}
+```
+
+---
+
+## Update Action Item
+
+```
+PATCH /api/action-item/:id
+```
+
+Body example:
+
+```json
+{
+  "status": "DONE"
+}
+```
+
+---
+
+## Delete Action Item
+
+```
+DELETE /api/action-item/:id
+```
+
+---
+
+## Health Check
+
+```
+GET /api/status
+```
+
+Returns:
+
+```json
+{
+  "backend": "ok",
+  "database": "ok",
+  "llm": "ok"
+}
+```
+
+---
+
+# 📂 Project Structure
+
+```
+meeting-action-tracker/
+│
+├── app/
+│   ├── api/
+│   │   ├── extract/
+│   │   │   └── route.ts
+│   │   ├── transcripts/
+│   │   │   └── route.ts
+│   │   ├── action-item/
+│   │   │   ├── route.ts
+│   │   │   └── [id]/route.ts
+│   │   └── status/
+│   │       └── route.ts
+│   │
+│   ├── status/
+│   │   └── page.tsx
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
+│
+├── components/
+│   ├── TranscriptInput.tsx
+│   ├── ActionItemList.tsx
+│   ├── ActionItemCard.tsx
+│   ├── AddActionItem.tsx
+│   └── HistorySidebar.tsx
+│
+├── lib/
+│   ├── prisma.ts
+│   └── api.ts
+│
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+│
+├── types/
+│   └── index.ts
+│
+├── .env
+├── .env.example
+├── README.md
+├── AI_NOTES.md
+├── PROMPTS_USED.md
+└── ABOUTME.md
+```
+
+---
+
+# 🧪 Testing Strategy
+
+This project prioritizes real integration validation:
+
+- Full CRUD tested via Postman
+- Database integrity validation
+- LLM integration validation
+- Health endpoint verification
+- Error handling for invalid inputs
+- Edge case validation (empty transcript, invalid ID, missing fields)
+
+All core flows validated end-to-end:
+
+```
+Frontend → API → Prisma → Database → Response
+Frontend → API → OpenAI → Structured JSON → Database
+```
+
+---
+
+# 🚀 Deployment
+
+Recommended: **Vercel**
+
+Steps:
+
+1. Push to GitHub
+2. Import project in Vercel
+3. Add environment variables:
+   - DATABASE_URL
+   - OPENAI_API_KEY
+4. Deploy
+
+---
+
+# ⚠️ Common Troubleshooting
+
+## Node Version Error
+
+Ensure Node 20+:
+
+```bash
+node -v
+```
+
+If needed:
+
+```bash
+nvm install 20
+nvm use 20
+```
+
+---
+
+## Prisma Issues
+
+```bash
+npx prisma migrate reset
+```
+
+---
+
+## LLM Failing
+
+Check:
+
+```bash
+echo $OPENAI_API_KEY
+```
+
+---
+
+# 👤 Author
+
+**Kumar Saurabh**  
 
