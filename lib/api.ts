@@ -16,7 +16,7 @@ export async function fetchTranscripts() {
   const res = await fetch("/api/transcripts");
 
   if (!res.ok) {
-    throw new Error("Failed to fetch history");
+    throw new Error("Failed to fetch transcripts");
   }
 
   return res.json();
@@ -51,7 +51,9 @@ export async function deleteActionItem(id: string) {
   return true;
 }
 
-export async function createActionItem(payload: Record<string, unknown>) {
+export async function createActionItem(
+  payload: Record<string, unknown>
+) {
   const res = await fetch(`/api/action-item`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
