@@ -11,6 +11,7 @@ export default function Home() {
   const [data, setData] = useState<Transcript | null>(null);
   const [history, setHistory] = useState<Transcript[]>([]);
   const [loading, setLoading] = useState(false);
+const [filter, setFilter] = useState<"ALL" | "OPEN" | "DONE">("ALL");
 
   const fetchHistory = async () => {
     const res = await fetch("/api/transcripts");
@@ -66,6 +67,41 @@ export default function Home() {
         : prev
     );
   };
+const deleteItem = async (id: string) => {
+  await fetch(`/api/action-item/${id}`, {
+    method: "DELETE",
+  });
+
+  setData((prev) =>
+    prev
+      ? {
+          ...prev,
+          items: prev.items.filter(
+            (item) => item.id !== id
+          ),
+        }
+      : prev
+  );
+};
+const filteredItems =
+  data?.items.filter((item) => {
+    if (filter === "ALL") return true;
+    return item.status === filter;
+  }) ?? [];
+const updateItem = (updatedItem: any) => {
+  setData((prev) =>
+    prev
+      ? {
+          ...prev,
+          items: prev.items.map((item) =>
+            item.id === updatedItem.id
+              ? updatedItem
+              : item
+          ),
+        }
+      : prev
+  );
+};
 
   return (
     <main className="min-h-screen p-10 bg-gray-50 flex gap-10">
@@ -86,11 +122,33 @@ export default function Home() {
             <h2 className="text-xl font-semibold mb-4">
               Action Items
             </h2>
+{data && (
+  <div className="mt-6 flex gap-2 mb-4">
+    {["ALL", "OPEN", "DONE"].map((value) => (
+      <button
+        key={value}
+        onClick={() => setFilter(value as any)}
+        className={`px-4 py-1 rounded border ${
+          filter === value
+            ? "bg-black text-white"
+            : "bg-white"
+        }`}
+      >
+        {value}
+      </button>
+    ))}
+  </div>
+)}
 
-            <ActionItemList
-              items={data.items}
-              onToggle={toggleStatus}
-            />
+<ActionItemList
+  items={filteredItems}
+  onToggle={toggleStatus}
+  onDelete={deleteItem}
+  onUpdate={updateItem}
+/>
+
+
+
           </div>
         )}
       </div>
