@@ -1,11 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Transcript } from "@/types";
+import TranscriptInput from "@/components/TranscriptInput";
+import ActionItemList from "@/components/ActionItemList";
+import HistorySidebar from "@/components/HistorySidebar";
 
 export default function Home() {
   const [transcript, setTranscript] = useState("");
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<Transcript | null>(null);
+  const [history, setHistory] = useState<Transcript[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const fetchHistory = async () => {
+    const res = await fetch("/api/transcripts");
+    const json = await res.json();
+    setHistory(json);
+  };
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
 
   const handleSubmit = async () => {
     if (!transcript.trim()) return;
@@ -14,62 +29,76 @@ export default function Home() {
 
     const res = await fetch("/api/extract", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ transcript }),
     });
 
     const json = await res.json();
     setData(json);
+    setTranscript("");
     setLoading(false);
+    fetchHistory();
+  };
+
+  const toggleStatus = async (
+    id: string,
+    currentStatus: string
+  ) => {
+    const newStatus =
+      currentStatus === "OPEN" ? "DONE" : "OPEN";
+
+    await fetch(`/api/action-item/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    });
+
+    setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            items: prev.items.map((item) =>
+              item.id === id
+                ? { ...item, status: newStatus }
+                : item
+            ),
+          }
+        : prev
+    );
   };
 
   return (
-    <main className="min-h-screen p-10 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-6">
-        Meeting Action Items Tracker
-      </h1>
+    <main className="min-h-screen p-10 bg-gray-50 flex gap-10">
+      <div className="flex-1">
+        <h1 className="text-3xl font-bold mb-6">
+          Meeting Action Items Tracker
+        </h1>
 
-      <textarea
-        className="w-full p-4 border rounded mb-4"
-        rows={5}
-        placeholder="Paste meeting transcript here..."
-        value={transcript}
-        onChange={(e) => setTranscript(e.target.value)}
+        <TranscriptInput
+          transcript={transcript}
+          loading={loading}
+          onChange={setTranscript}
+          onSubmit={handleSubmit}
+        />
+
+        {data && (
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4">
+              Action Items
+            </h2>
+
+            <ActionItemList
+              items={data.items}
+              onToggle={toggleStatus}
+            />
+          </div>
+        )}
+      </div>
+
+      <HistorySidebar
+        history={history}
+        onSelect={setData}
       />
-
-      <button
-        onClick={handleSubmit}
-        className="bg-black text-white px-6 py-2 rounded"
-      >
-        {loading ? "Processing..." : "Extract Action Items"}
-      </button>
-
-      {data && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Action Items</h2>
-          <ul className="space-y-3">
-            {data.items.map((item: any) => (
-              <li
-                key={item.id}
-                className="p-4 bg-white rounded shadow"
-              >
-                <p className="font-medium">{item.task}</p>
-                <p className="text-sm text-gray-600">
-                  Owner: {item.owner || "—"}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Due: {item.dueDate || "—"}
-                </p>
-                <p className="text-sm">
-                  Status: {item.status}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </main>
   );
 }
