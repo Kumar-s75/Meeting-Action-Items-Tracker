@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   extractTranscript,
   fetchTranscripts,
@@ -107,20 +108,23 @@ export default function Home() {
   };
 
   // Update after edit
-  const updateItem = (updatedItem: ActionItem) => {
-    setData((prev) =>
-      prev
-        ? {
-            ...prev,
-            items: prev.items.map((item) =>
-              item.id === updatedItem.id
-                ? updatedItem
-                : item
-            ),
-          }
-        : prev
-    );
-  };
+ const updateItem: (updatedItem: ActionItem) => void = (
+  updatedItem
+) => {
+  setData((prev) =>
+    prev
+      ? {
+          ...prev,
+          items: prev.items.map((item) =>
+            item.id === updatedItem.id
+              ? updatedItem
+              : item
+          ),
+        }
+      : prev
+  );
+};
+
 
   // Apply filter
   const filteredItems =
@@ -135,14 +139,24 @@ export default function Home() {
         {/* Main Workspace */}
         <div className="flex-1">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-semibold tracking-tight">
-              Meeting Action Items Tracker
-            </h1>
-            <p className="text-gray-600 mt-2 text-sm">
-              Paste your meeting transcript and extract structured action items.
-              Edit, manage, and track completion status.
-            </p>
+          <div className="mb-8 flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-semibold tracking-tight">
+                Meeting Action Items Tracker
+              </h1>
+              <p className="text-gray-600 mt-2 text-sm">
+                Paste your meeting transcript and extract structured action items.
+                Edit, manage, and track completion status.
+              </p>
+            </div>
+
+            {/* System Status Button */}
+            <Link
+              href="/status"
+              className="text-sm px-4 py-2 rounded-md border border-gray-200 bg-white hover:bg-gray-100 transition"
+            >
+              System Status
+            </Link>
           </div>
 
           {/* Transcript Input Card */}
@@ -171,7 +185,6 @@ export default function Home() {
                 Action Items
               </h2>
 
-              {/* Add Item */}
               <AddActionItem
                 transcriptId={data.id}
                 onCreate={(item) =>

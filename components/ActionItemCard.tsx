@@ -39,23 +39,23 @@ export default function ActionItemCard({
   };
 
   return (
-    <li className="p-4 bg-white rounded shadow flex justify-between items-start">
+    <li className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 flex justify-between items-start">
       <div className="flex-1">
         {editing ? (
           <div className="space-y-2">
             <input
-              className="w-full border p-1 rounded"
+              className="w-full border border-gray-200 p-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-black/20"
               value={task}
               onChange={(e) => setTask(e.target.value)}
             />
             <input
-              className="w-full border p-1 rounded"
+              className="w-full border border-gray-200 p-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-black/20"
               placeholder="Owner"
               value={owner}
               onChange={(e) => setOwner(e.target.value)}
             />
             <input
-              className="w-full border p-1 rounded"
+              className="w-full border border-gray-200 p-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-black/20"
               placeholder="Due date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
@@ -64,66 +64,70 @@ export default function ActionItemCard({
         ) : (
           <>
             <p
-              className={`font-medium ${
+              className={`font-medium text-sm ${
                 item.status === "DONE"
                   ? "line-through text-gray-400"
-                  : ""
+                  : "text-gray-900"
               }`}
             >
               {item.task}
             </p>
-            <p className="text-sm text-gray-600">
+
+            <p className="text-xs text-gray-500 mt-1">
               Owner: {item.owner || "—"}
             </p>
-            <p className="text-sm text-gray-600">
+
+            <p className="text-xs text-gray-500 mt-1">
               Due: {item.dueDate || "—"}
             </p>
           </>
         )}
       </div>
 
-      <div className="flex flex-col gap-2 ml-4">
-        {!editing && (
+      <div className="flex flex-col gap-2 ml-6">
+        {!editing ? (
           <>
             <button
               onClick={() =>
                 onToggle(item.id, item.status)
               }
-              className="px-3 py-1 rounded bg-green-600 text-white"
+              className={`px-3 py-1 text-xs rounded-md font-medium transition ${
+                item.status === "OPEN"
+                  ? "bg-green-600 text-white hover:bg-green-700"
+                  : "bg-gray-400 text-white hover:bg-gray-500"
+              }`}
             >
               {item.status === "OPEN"
-                ? "Done"
+                ? "Mark Done"
                 : "Reopen"}
             </button>
 
             <button
               onClick={() => setEditing(true)}
-              className="px-3 py-1 rounded bg-blue-600 text-white"
+              className="px-3 py-1 text-xs rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700 transition"
             >
               Edit
             </button>
 
             <button
               onClick={() => onDelete(item.id)}
-              className="px-3 py-1 rounded bg-red-600 text-white"
+              className="px-3 py-1 text-xs rounded-md font-medium bg-red-500 text-white hover:bg-red-600 transition"
             >
               Delete
             </button>
           </>
-        )}
-
-        {editing && (
+        ) : (
           <>
             <button
               onClick={handleSave}
-              className="px-3 py-1 rounded bg-black text-white"
+              className="px-3 py-1 text-xs rounded-md font-medium bg-black text-white hover:opacity-90 transition"
             >
               Save
             </button>
 
             <button
               onClick={() => setEditing(false)}
-              className="px-3 py-1 rounded bg-gray-400 text-white"
+              className="px-3 py-1 text-xs rounded-md font-medium bg-gray-400 text-white hover:bg-gray-500 transition"
             >
               Cancel
             </button>
