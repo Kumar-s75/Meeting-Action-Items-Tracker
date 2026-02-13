@@ -16,7 +16,7 @@ export default function TranscriptInput({
   return (
     <>
       <textarea
-        className="w-full p-4 border rounded mb-4"
+        className="w-full p-4 border border-gray-200 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-black/20 transition"
         rows={5}
         placeholder="Paste meeting transcript here..."
         value={transcript}
@@ -25,7 +25,7 @@ export default function TranscriptInput({
 
       <button
         onClick={onSubmit}
-        className="bg-black text-white px-6 py-2 rounded"
+        className="mt-3 px-5 py-2 rounded-md bg-black text-white text-sm font-medium hover:opacity-90 transition"
       >
         {loading ? "Processing..." : "Extract Action Items"}
       </button>

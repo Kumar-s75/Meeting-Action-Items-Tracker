@@ -130,86 +130,98 @@ export default function Home() {
     }) ?? [];
 
   return (
-    <main className="min-h-screen p-10 bg-gray-50 flex gap-10">
-      {/* Main Workspace */}
-      <div className="flex-1">
-        <h1 className="text-3xl font-bold mb-6">
-          Meeting Action Items Tracker
-        </h1>
+    <main className="min-h-screen bg-gray-50">
+      <div className="max-w-6xl mx-auto px-6 py-10 flex gap-10">
+        {/* Main Workspace */}
+        <div className="flex-1">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-semibold tracking-tight">
+              Meeting Action Items Tracker
+            </h1>
+            <p className="text-gray-600 mt-2 text-sm">
+              Paste your meeting transcript and extract structured action items.
+              Edit, manage, and track completion status.
+            </p>
+          </div>
 
-        <TranscriptInput
-          transcript={transcript}
-          loading={loading}
-          onChange={setTranscript}
-          onSubmit={handleSubmit}
-        />
-
-        {error && (
-          <p className="text-red-500 mt-3">{error}</p>
-        )}
-
-        {!data && (
-          <p className="text-gray-500 mt-6">
-            No transcript processed yet.
-          </p>
-        )}
-
-        {data && (
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">
-              Action Items
-            </h2>
-
-            {/* Add Item Component */}
-            <AddActionItem
-              transcriptId={data.id}
-              onCreate={(item) =>
-                setData((prev) =>
-                  prev
-                    ? {
-                        ...prev,
-                        items: [...prev.items, item],
-                      }
-                    : prev
-                )
-              }
-              onError={setError}
-            />
-
-            {/* Filter Buttons */}
-            <div className="flex gap-2 mb-4">
-              {["ALL", "OPEN", "DONE"].map((value) => (
-                <button
-                  key={value}
-                  onClick={() =>
-                    setFilter(value as Filter)
-                  }
-                  className={`px-4 py-1 rounded border ${
-                    filter === value
-                      ? "bg-black text-white"
-                      : "bg-white"
-                  }`}
-                >
-                  {value}
-                </button>
-              ))}
-            </div>
-
-            <ActionItemList
-              items={filteredItems}
-              onToggle={toggleStatus}
-              onDelete={deleteItem}
-              onUpdate={updateItem}
+          {/* Transcript Input Card */}
+          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+            <TranscriptInput
+              transcript={transcript}
+              loading={loading}
+              onChange={setTranscript}
+              onSubmit={handleSubmit}
             />
           </div>
-        )}
-      </div>
 
-      {/* Sidebar */}
-      <HistorySidebar
-        history={history}
-        onSelect={setData}
-      />
+          {error && (
+            <p className="text-red-500 mt-4 text-sm">{error}</p>
+          )}
+
+          {!data && (
+            <p className="text-gray-500 mt-6 text-sm">
+              No transcript processed yet.
+            </p>
+          )}
+
+          {data && (
+            <div className="mt-10">
+              <h2 className="text-lg font-semibold mb-4">
+                Action Items
+              </h2>
+
+              {/* Add Item */}
+              <AddActionItem
+                transcriptId={data.id}
+                onCreate={(item) =>
+                  setData((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          items: [...prev.items, item],
+                        }
+                      : prev
+                  )
+                }
+                onError={setError}
+              />
+
+              {/* Filters */}
+              <div className="flex gap-2 mt-4 mb-6">
+                {["ALL", "OPEN", "DONE"].map((value) => (
+                  <button
+                    key={value}
+                    onClick={() =>
+                      setFilter(value as Filter)
+                    }
+                    className={`px-4 py-1.5 text-sm rounded-md border transition ${
+                      filter === value
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-gray-700 border-gray-200 hover:bg-gray-100"
+                    }`}
+                  >
+                    {value}
+                  </button>
+                ))}
+              </div>
+
+              <ActionItemList
+                items={filteredItems}
+                onToggle={toggleStatus}
+                onDelete={deleteItem}
+                onUpdate={updateItem}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Sidebar */}
+        <HistorySidebar
+          history={history}
+          onSelect={setData}
+        />
+      </div>
     </main>
   );
 }
