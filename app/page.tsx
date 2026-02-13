@@ -22,7 +22,6 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("ALL");
 
-  // Fetch transcript history
   const fetchHistory = async () => {
     try {
       const json = await fetchTranscripts();
@@ -36,7 +35,6 @@ export default function Home() {
     fetchHistory();
   }, []);
 
-  // Extract transcript
   const handleSubmit = async () => {
     if (!transcript.trim()) {
       setError("Transcript cannot be empty.");
@@ -59,13 +57,8 @@ export default function Home() {
     }
   };
 
-  // Toggle status
-  const toggleStatus = async (
-    id: string,
-    currentStatus: string
-  ) => {
-    const newStatus =
-      currentStatus === "OPEN" ? "DONE" : "OPEN";
+  const toggleStatus = async (id: string, currentStatus: string) => {
+    const newStatus = currentStatus === "OPEN" ? "DONE" : "OPEN";
 
     try {
       await updateActionItem(id, { status: newStatus });
@@ -75,9 +68,7 @@ export default function Home() {
           ? {
               ...prev,
               items: prev.items.map((item) =>
-                item.id === id
-                  ? { ...item, status: newStatus }
-                  : item
+                item.id === id ? { ...item, status: newStatus } : item
               ),
             }
           : prev
@@ -87,7 +78,6 @@ export default function Home() {
     }
   };
 
-  // Delete item
   const deleteItem = async (id: string) => {
     try {
       await deleteActionItem(id);
@@ -96,9 +86,7 @@ export default function Home() {
         prev
           ? {
               ...prev,
-              items: prev.items.filter(
-                (item) => item.id !== id
-              ),
+              items: prev.items.filter((item) => item.id !== id),
             }
           : prev
       );
@@ -107,26 +95,21 @@ export default function Home() {
     }
   };
 
-  // Update after edit
- const updateItem: (updatedItem: ActionItem) => void = (
-  updatedItem
-) => {
-  setData((prev) =>
-    prev
-      ? {
-          ...prev,
-          items: prev.items.map((item) =>
-            item.id === updatedItem.id
-              ? updatedItem
-              : item
-          ),
-        }
-      : prev
-  );
-};
+  const updateItem: (updatedItem: ActionItem) => void = (
+    updatedItem
+  ) => {
+    setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            items: prev.items.map((item) =>
+              item.id === updatedItem.id ? updatedItem : item
+            ),
+          }
+        : prev
+    );
+  };
 
-
-  // Apply filter
   const filteredItems =
     data?.items.filter((item) => {
       if (filter === "ALL") return true;
@@ -135,28 +118,34 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-50">
+      
+      {/* Top Bar (Fully Left-Aligned) */}
+      <div className="border-b bg-white">
+        <div className="px-6 py-4">
+          <Link
+            href="/status"
+            className="text-sm px-4 py-2 rounded-md border border-gray-300 bg-black text-white hover:bg-gray-800 transition"
+          >
+            System Status
+          </Link>
+        </div>
+      </div>
+
+      {/* Main Content Container */}
       <div className="max-w-6xl mx-auto px-6 py-10 flex gap-10">
+        
         {/* Main Workspace */}
         <div className="flex-1">
-          {/* Header */}
-          <div className="mb-8 flex justify-between items-start">
-            <div>
-              <h1 className="text-3xl font-semibold tracking-tight">
-                Meeting Action Items Tracker
-              </h1>
-              <p className="text-gray-600 mt-2 text-sm">
-                Paste your meeting transcript and extract structured action items.
-                Edit, manage, and track completion status.
-              </p>
-            </div>
 
-            {/* System Status Button */}
-            <Link
-              href="/status"
-              className="text-sm px-4 py-2 rounded-md border border-gray-200 bg-white hover:bg-gray-100 transition"
-            >
-              System Status
-            </Link>
+          {/* Title Section */}
+          <div className="mb-10">
+            <h1 className="text-3xl font-semibold tracking-tight text-gray-800">
+              Meeting Action Items Tracker
+            </h1>
+            <p className="text-gray-600 mt-2 text-sm max-w-xl">
+              Paste your meeting transcript and extract structured action items.
+              Edit, manage, and track completion status.
+            </p>
           </div>
 
           {/* Transcript Input Card */}
@@ -190,10 +179,7 @@ export default function Home() {
                 onCreate={(item) =>
                   setData((prev) =>
                     prev
-                      ? {
-                          ...prev,
-                          items: [...prev.items, item],
-                        }
+                      ? { ...prev, items: [...prev.items, item] }
                       : prev
                   )
                 }
@@ -205,9 +191,7 @@ export default function Home() {
                 {["ALL", "OPEN", "DONE"].map((value) => (
                   <button
                     key={value}
-                    onClick={() =>
-                      setFilter(value as Filter)
-                    }
+                    onClick={() => setFilter(value as Filter)}
                     className={`px-4 py-1.5 text-sm rounded-md border transition ${
                       filter === value
                         ? "bg-black text-white border-black"

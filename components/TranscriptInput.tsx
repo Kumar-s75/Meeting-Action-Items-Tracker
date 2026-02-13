@@ -16,7 +16,7 @@ export default function TranscriptInput({
   return (
     <>
       <textarea
-        className="w-full p-4 border border-gray-200 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-black/20 transition"
+        className="w-full p-4 border border-gray-200 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-black/20 transition text-gray-950"
         rows={5}
         placeholder="Paste meeting transcript here..."
         value={transcript}
