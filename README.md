@@ -283,6 +283,8 @@ meeting-action-tracker/
 ├── PROMPTS_USED.md
 └── ABOUTME.md
 ```
+<img width="857" height="832" alt="image" src="https://github.com/user-attachments/assets/b05cc6c3-81ad-48b6-be5e-ecc3351b3e2b" />
+
 
 ---
 
@@ -358,7 +360,7 @@ echo $OPENAI_API_KEY
 
 ---
 
-# 👤 Author
+# Regards
 
 **Kumar Saurabh**  
 
